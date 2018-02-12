@@ -87,6 +87,13 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   measurements.
   */
   if(!is_initialized_){
+    x_ << 1, 1, 1, 1, 0.1;
+
+    P_ << 0.15,    0, 0, 0, 0,
+             0, 0.15, 0, 0, 0,
+             0,    0, 1, 0, 0,
+             0,    0, 0, 1, 0,
+             0,    0, 0, 0, 1;
     if ((meas_package.sensor_type_ == MeasurementPackage::RADAR) && use_radar_){
       /**
       Convert radar from polar to cartesian coordinates and initialize state.
@@ -104,15 +111,6 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
       x_(1) = meas_package.raw_measurements_(1);
     }
     time_us_ = meas_package.timestamp_;
-
-    x_ << 1, 1, 1, 1, 0.1;
-
-    P_ << 0.15,    0, 0, 0, 0,
-             0, 0.15, 0, 0, 0,
-             0,    0, 1, 0, 0,
-             0,    0, 0, 1, 0,
-             0,    0, 0, 0, 1;
-
     is_initialized_ = true;
     return;
   }
