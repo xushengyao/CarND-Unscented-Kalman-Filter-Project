@@ -92,7 +92,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 
     P_ = MatrixXd::Identity(5,5);
     P_(0,0)=0.15;
-    P_(1,1)=0.15
+    P_(1,1)=0.15;
 
     if ((meas_package.sensor_type_ == MeasurementPackage::RADAR) && use_radar_){
       /**
