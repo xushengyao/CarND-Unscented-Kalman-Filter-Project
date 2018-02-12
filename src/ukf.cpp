@@ -395,7 +395,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 
    //add measurement noise covariance matrix
    MatrixXd R = MatrixXd(n_z, n_z);
-   R << std_radr*std_radr, 0, 0,
+   R << std_radr_*std_radr_, 0, 0,
         0, std_radphi_*std_radphi_, 0,
         0, 0,std_radrd_*std_radrd_;
    S = S + R;
