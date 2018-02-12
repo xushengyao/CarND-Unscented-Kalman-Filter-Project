@@ -251,7 +251,7 @@ void UKF::Prediction(double delta_t) {
    for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //iterate over sigma points
 
      // state difference
-     VectorXd x_diff = Xsig_pred_.col(i) - x;
+     VectorXd x_diff = Xsig_pred_.col(i) - x_;
      //angle normalization
      while (x_diff(3)> M_PI) x_diff(3)-=2.*M_PI;
      while (x_diff(3)<-M_PI) x_diff(3)+=2.*M_PI;
@@ -316,7 +316,7 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
   Tc.fill(0.0);
   for (int i = 0; i < 2 * n_aug_ + 1; i++){
     // residual
-    VectorXd z_diff = Zsig.col(i) - z_predl
+    VectorXd z_diff = Zsig.col(i) - z_pred;
     VectorXd x_diff = Xsig_pred_.col(i) - x_;
 
     Tc = Tc + weights_(i) * x_diff * z_diff.transpose();
@@ -332,7 +332,7 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
   NIS_laser_ = z_diff.transpose() * S.inverse() * z_diff;
 
   //update state mean and covariance matrix
-  x = x_ + K * z_diff;
+  x_ = x_ + K * z_diff;
   P_ = P_ - K*S*K.transpose();
 }
 
@@ -396,8 +396,8 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
    //add measurement noise covariance matrix
    MatrixXd R = MatrixXd(n_z, n_z);
    R << std_radr*std_radr, 0, 0,
-        0, std_radphi*std_radphi, 0,
-        0, 0,std_radrd*std_radrd;
+        0, std_radphi_*std_radphi_, 0,
+        0, 0,std_radrd_*std_radrd_;
    S = S + R;
 
    //create matrix for cross correlation Tc
