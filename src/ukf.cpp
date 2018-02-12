@@ -28,7 +28,7 @@ UKF::UKF() {
   std_a_ = 0.5;
 
   // Process noise standard deviation yaw acceleration in rad/s^2
-  std_yawdd_ = 0.2;
+  std_yawdd_ = 0.5;
 
   //DO NOT MODIFY measurement noise values below these are provided by the sensor manufacturer.
   // Laser measurement noise standard deviation position1 in m
@@ -234,14 +234,6 @@ void UKF::Prediction(double delta_t) {
     Xsig_pred_(3,i) = yaw_p;
     Xsig_pred_(4,i) = yawd_p;
    }
-
-   // double weight_0 = lambda_ / (lambda_ + n_aug_);
-   // weights_(0) = weight_0;
-   // for (int i=0; i < 2 * n_aug_ + 1; i++) {
-   //   double weight =  0.5 / (n_aug_+lambda_);
-   //   weights_(i) = weight;
-   //   }
-
      // set weights
    double weight_0 = lambda_ / (lambda_ + n_aug_);
    weights_(0) = weight_0;
@@ -270,11 +262,6 @@ void UKF::Prediction(double delta_t) {
      P_ = P_ + weights_(i) * x_diff * x_diff.transpose() ;
    }
  }
-  /*****************************************************************************
-  *  Convert Predicted Sigma Points to Mean/Covariance
-  ****************************************************************************/
-
-
 
 void UKF::UpdateLidar(MeasurementPackage meas_package) {
   /**
