@@ -57,13 +57,13 @@ UKF::UKF() {
   //set initialize state
   is_initialized_ = false;
   //initiate time
-  time_us_ = 0.0；
+  time_us_ = 0.0;
   //set state dimension
   n_x_ = 5;
   //set augmented dimension
-  n_aug_ = 7；
+  n_aug_ = 7;
   //define spreading parameter
-  lambda = 3 - n_x_;
+  lambda_ = 3 - n_x_;
   //sigma points matrix
   Xsig_pred_ = MatrixXd(n_x_, 2 * n_aug_ + 1);
   //weights
@@ -87,22 +87,21 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   measurements.
   */
   if(!is_initialized_){
-    if ((measurement_pack.sensor_type_ == MeasurementPackage::RADAR) && use_radar_){
+    if ((meas_package.sensor_type_ == MeasurementPackage::RADAR) && use_radar_){
       /**
       Convert radar from polar to cartesian coordinates and initialize state.
       */
-      double ro     = measurement_pack.raw_measurements_(0);
-      double phi    = measurement_pack.raw_measurements_(1);
-      //float ro_dot = measurement_pack.raw_measurements_(2);
+      double ro     = meas_package.raw_measurements_(0);
+      double phi    = meas_package.raw_measurements_(1);
       x_(0) = ro     * cos(phi);
       x_(1) = ro     * sin(phi);
     }
-    else if ((measurement_pack.sensor_type_ == MeasurementPackage::LASER) && use_laser_) {
+    else if ((meas_package.sensor_type_ == MeasurementPackage::LASER) && use_laser_) {
       /**
       Initialize state.
       */
-      x_(0) = measurement_pack.raw_measurements_(0);
-      x_(1) = measurement_pack.raw_measurements_(1);
+      x_(0) = meas_package.raw_measurements_(0);
+      x_(1) = meas_package.raw_measurements_(1);
     }
     time_us_ = meas_package.timestamp_;
 
@@ -188,8 +187,8 @@ void UKF::Prediction(double delta_t) {
   Xsig_aug.col(0)  = x_aug;
   for (int i = 0; i< n_aug_; i++)
   {
-    Xsig_aug.col(i+1)       = x_aug + sqrt(lambda+n_aug_) * L.col(i);
-    Xsig_aug.col(i+1+n_aug_) = x_aug - sqrt(lambda+n_aug_) * L.col(i);
+    Xsig_aug.col(i+1)       = x_aug + sqrt(lambda_+n_aug_) * L.col(i);
+    Xsig_aug.col(i+1+n_aug_) = x_aug - sqrt(lambda_+n_aug_) * L.col(i);
   }
 
   //predict sigma points
@@ -227,42 +226,39 @@ void UKF::Prediction(double delta_t) {
     yawd_p = yawd_p + nu_yawdd*delta_t;
 
     //write predicted sigma point into right column
-    Xsig_pred(0,i) = px_p;
-    Xsig_pred(1,i) = py_p;
-    Xsig_pred(2,i) = v_p;
-    Xsig_pred(3,i) = yaw_p;
-    Xsig_pred(4,i) = yawd_p;
+    Xsig_pred_(0,i) = px_p;
+    Xsig_pred_(1,i) = py_p;
+    Xsig_pred_(2,i) = v_p;
+    Xsig_pred_(3,i) = yaw_p;
+    Xsig_pred_(4,i) = yawd_p;
    }
 
    double weight_0 = lambda_ / (lambda_ + n_aug_);
    weights_(0) = weight_0;
    for (int i=0; i<2*n_aug_+1; i++) {
-     double weight =  0.5/(n_aug_+lambda);
+     double weight =  0.5/(n_aug_+lambda_);
      weights_(i) = weight;
      }
-   }
 
    //predicted state mean
-   x.fill(0.0);
+   x_.fill(0.0);
    for (int i = 0; i < 2 * n_aug_ + 1; i++) {
-     x = x+ weights_(i) * Xsig_pred.col(i);
+     x_ = x_+ weights_(i) * Xsig_pred_.col(i);
    }
 
    //predicted state covariance matrix
-   P.fill(0.0);
+   P_.fill(0.0);
    for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //iterate over sigma points
 
      // state difference
-     VectorXd x_diff = Xsig_pred.col(i) - x;
+     VectorXd x_diff = Xsig_pred_.col(i) - x;
      //angle normalization
      while (x_diff(3)> M_PI) x_diff(3)-=2.*M_PI;
      while (x_diff(3)<-M_PI) x_diff(3)+=2.*M_PI;
 
-     P = P + weights_(i) * x_diff * x_diff.transpose() ;
+     P_ = P_ + weights_(i) * x_diff * x_diff.transpose() ;
    }
-
-}
-
+ }
 /**
  * Updates the state and the state covariance matrix using a laser measurement.
  * @param {MeasurementPackage} meas_package
