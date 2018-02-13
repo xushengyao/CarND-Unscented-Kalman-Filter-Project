@@ -99,9 +99,9 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
       Convert radar from polar to cartesian coordinates and initialize state.
       */
 
-      double ro = measurement_pack.raw_measurements_[0];
-      double phi = measurement_pack.raw_measurements_[1];
-      double ro_dot = measurement_pack.raw_measurements_[2];
+      double ro = meas_package.raw_measurements_[0];
+      double phi = meas_package.raw_measurements_[1];
+      double ro_dot = meas_package.raw_measurements_[2];
 
       double px = ro * cos(phi);
       double py = ro * sin(phi);
@@ -133,8 +133,8 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   double dt = (meas_package.timestamp_ - time_us_) / 1000000.0;
 
   //if (dt > 0.001) {
-    time_us_ = meas_package.timestamp_;
-    Prediction(dt);
+  time_us_ = meas_package.timestamp_;
+  Prediction(dt);
   //}
 
   if ((meas_package.sensor_type_ == MeasurementPackage::LASER) && use_laser_) {
