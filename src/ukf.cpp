@@ -89,23 +89,8 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   if(!is_initialized_){
 
     time_us_ = meas_package.timestamp_;
+    P_ = MatrixXd::Identity(5,5);
 
-  //  P_ = MatrixXd::Identity(5,5);
-  P_ << 1, 0, 0, 0, 0,
-      0, 1, 0, 0, 0,
-      0, 0, 1, 0, 0,
-      0, 0, 0, 1, 0,
-      0, 0, 0, 0, 1;
-    //P_(0,0)=0.5;
-    //P_(1,1)=0.5;
-    //x_ << 1, 1, 1, 1, 1;
-
-    // init covariance matrix
-    // P_ << 0.15,0,0,0,0,
-  	//    0,0.15,0,0,0,
-  	//    0,0,0.15,0,0,
-  	//    0,0,0,0.15,0,
-  	//    0,0,0,0,0.15;
     if ((meas_package.sensor_type_ == MeasurementPackage::RADAR) && use_radar_){
       /**
       Convert radar from polar to cartesian coordinates and initialize state.
