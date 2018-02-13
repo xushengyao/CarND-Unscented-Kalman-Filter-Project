@@ -25,7 +25,7 @@ UKF::UKF() {
   P_ = MatrixXd(5, 5);
 
   // Process noise standard deviation longitudinal acceleration in m/s^2
-  std_a_ = 0.6;
+  std_a_ = 0.8;
 
   // Process noise standard deviation yaw acceleration in rad/s^2
   std_yawdd_ = 0.5;
@@ -237,7 +237,7 @@ void UKF::Prediction(double delta_t) {
      // set weights
    double weight_0 = lambda_ / (lambda_ + n_aug_);
    weights_(0) = weight_0;
-   for (int i = 1; i < 2 * n_aug_ + 1; i++) {  //2n+1 weights
+   for (int i = 1; i < 2 * n_aug_ + 1; i++) {
      double weight = 0.5 / (n_aug_ + lambda_);
      weights_(i) = weight;
    }
