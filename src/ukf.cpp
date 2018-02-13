@@ -25,10 +25,10 @@ UKF::UKF() {
   P_ = MatrixXd(5, 5);
 
   // Process noise standard deviation longitudinal acceleration in m/s^2
-  std_a_ = 0.2;
+  std_a_ = 1.5;
 
   // Process noise standard deviation yaw acceleration in rad/s^2
-  std_yawdd_ = 0.2;
+  std_yawdd_ = 0.3;
 
   //DO NOT MODIFY measurement noise values below these are provided by the sensor manufacturer.
   // Laser measurement noise standard deviation position1 in m
@@ -90,17 +90,17 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 
     time_us_ = meas_package.timestamp_;
 
-  //  P_ = MatrixXd::Identity(5,5);
+    P_ = MatrixXd::Identity(5,5);
     //P_(0,0)=0.5;
     //P_(1,1)=0.5;
-    x_ << 1, 1, 1, 1, 1;
+    //x_ << 1, 1, 1, 1, 1;
 
     // init covariance matrix
-    P_ << 0.15,0,0,0,0,
-  	   0,0.15,0,0,0,
-  	   0,0,0.15,0,0,
-  	   0,0,0,0.15,0,
-  	   0,0,0,0,0.15;
+    // P_ << 0.15,0,0,0,0,
+  	//    0,0.15,0,0,0,
+  	//    0,0,0.15,0,0,
+  	//    0,0,0,0.15,0,
+  	//    0,0,0,0,0.15;
     if ((meas_package.sensor_type_ == MeasurementPackage::RADAR) && use_radar_){
       /**
       Convert radar from polar to cartesian coordinates and initialize state.
