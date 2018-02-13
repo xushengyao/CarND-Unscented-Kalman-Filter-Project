@@ -119,8 +119,8 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
       x_(0) = px;
       x_(1) = py;
       x_(2) = v;
-      x_(3) = 0.0;
-      x_(4) = 0.0;
+      //x_(3) = 0.0;
+      //x_(4) = 0.0;
     }
     else if ((meas_package.sensor_type_ == MeasurementPackage::LASER) && use_laser_) {
       /**
@@ -128,9 +128,9 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
       */
       x_(0) = meas_package.raw_measurements_(0);
       x_(1) = meas_package.raw_measurements_(1);
-      x_(2) = 0.0;
-      x_(3) = 0.0;
-      x_(4) = 0.0;
+    //  x_(2) = 0.0;
+      //x_(3) = 0.0;
+      //x_(4) = 0.0;
     }
     is_initialized_ = true;
     return;
