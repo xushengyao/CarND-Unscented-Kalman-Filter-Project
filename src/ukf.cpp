@@ -25,10 +25,10 @@ UKF::UKF() {
   P_ = MatrixXd(5, 5);
 
   // Process noise standard deviation longitudinal acceleration in m/s^2
-  std_a_ = 2;
+  std_a_ = 0.2;
 
   // Process noise standard deviation yaw acceleration in rad/s^2
-  std_yawdd_ = 0.3;
+  std_yawdd_ = 0.2;
 
   //DO NOT MODIFY measurement noise values below these are provided by the sensor manufacturer.
   // Laser measurement noise standard deviation position1 in m
@@ -63,7 +63,7 @@ UKF::UKF() {
   //set augmented dimension
   n_aug_ = 7;
   //define spreading parameter
-  lambda_ = 3 - n_x_;
+  lambda_ = 3 - n_aug_;
   //sigma points matrix
   Xsig_pred_ = MatrixXd(n_x_, 2 * n_aug_ + 1);
   //weights
@@ -93,14 +93,14 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   //  P_ = MatrixXd::Identity(5,5);
     //P_(0,0)=0.5;
     //P_(1,1)=0.5;
-    x_ << 1, 1, 1, 1, 0.1;
+    x_ << 1, 1, 1, 1, 1;
 
     // init covariance matrix
-    P_ << 0.15,    0, 0, 0, 0,
-             0, 0.15, 0, 0, 0,
-             0,    0, 1, 0, 0,
-             0,    0, 0, 1, 0,
-             0,    0, 0, 0, 1;
+    P_ << 0.15,0,0,0,0,
+  	   0,0.15,0,0,0,
+  	   0,0,0.15,0,0,
+  	   0,0,0,0.15,0,
+  	   0,0,0,0,0.15;
     if ((meas_package.sensor_type_ == MeasurementPackage::RADAR) && use_radar_){
       /**
       Convert radar from polar to cartesian coordinates and initialize state.
